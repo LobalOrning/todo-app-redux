@@ -21,5 +21,5 @@ class TodoForm extends Component {
 
 export default connect(
   null,
-  {addTodoAsync}
+  { addTodoAsync }
 )(TodoForm)

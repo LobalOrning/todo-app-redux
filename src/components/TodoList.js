@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { fetchTodosAsync } from '../reducers/todo'
+import { fetchTodosAsync, toggleTodoAsync } from '../reducers/todo'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSync } from '@fortawesome/free-solid-svg-icons/faSync'
 import Todo from './Todo'
@@ -11,7 +11,7 @@ class TodoList extends Component {
     this.props.fetchTodosAsync()
   }
   render() {
-    const { todos, loading } = this.props
+    const { todos, loading, toggleTodoAsync } = this.props
     return (
       <div
         style={{
@@ -30,7 +30,13 @@ class TodoList extends Component {
           }}
         >
           {todos.map(t => (
-            <Todo key={t.id} text={t.text} complete={t.complete} />
+            <Todo
+              key={t.id}
+              id={t.id}
+              text={t.text}
+              complete={t.complete}
+              toggleTodo={toggleTodoAsync}
+            />
           ))}
         </ul>
       </div>
@@ -46,12 +52,12 @@ TodoList.propTypes = {
 }
 
 const mapStateToProps = state => ({
-  todos: state.todos,
+  todos: state.todo.todos,
   loading: state.loading,
   error: state.error
 })
 
 export default connect(
   mapStateToProps,
-  { fetchTodosAsync }
+  { fetchTodosAsync, toggleTodoAsync }
 )(TodoList)

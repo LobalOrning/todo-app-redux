@@ -2,7 +2,15 @@ import {
   fetchTodosAsync,
   fetchTodosAsyncRequest,
   fetchTodosAsyncFailure,
-  fetchTodosAsyncSuccess
+  fetchTodosAsyncSuccess,
+  addTodoAsync,
+  addTodoAsyncRequest,
+  addTodoAsyncSuccess,
+  addTodoAsyncFailure,
+  toggleTodoAsync,
+  toggleTodoAsyncRequest,
+  toggleTodoAsyncSuccess,
+  toggleTodoAsyncFailure
 } from './todo'
 
 import reducer from './todo'
@@ -144,6 +152,82 @@ describe('reducer', () => {
 
     expect(state).toEqual(expectedState)
   })
+
+  test('toggle todo async request should return server true', () => {
+    const init = {
+      todos: [
+        { id: 1, text: 'Get milk', complete: false }
+      ],
+      server: false,
+      loading: false,
+      error: ''
+    }
+    const expectedState = {
+      todos: [
+        { id: 1, text: 'Get milk', complete: false }
+      ],
+      server: true,
+      loading: false,
+      error: ''
+    }
+    const state = reducer(
+      init,
+      { type: 'TOGGLE_TODO_ASYNC_REQUEST' }
+    )
+
+    expect(state).toEqual(expectedState)
+  })
+
+  test('toggle todo async success should return todo with complete toggled', () => {
+    const init = {
+      todos: [
+        { id: 1, text: 'Get milk', complete: false }
+      ],
+      server: false,
+      loading: false,
+      error: ''
+    }
+    const expectedState = {
+      todos: [
+        { id: 1, text: 'Get milk', complete: true }
+      ],
+      server: false,
+      loading: false,
+      error: ''
+    }
+    const state = reducer(
+      init,
+      { type: 'TOGGLE_TODO_ASYNC_SUCCESS', payload: { id: 1, text: 'Get milk', complete: true } }
+    )
+
+    expect(state).toEqual(expectedState)
+  })
+
+  test('toggle todo async failure should return error message', () => {
+    const init = {
+      todos: [
+        { id: 1, text: 'Get milk', complete: false }
+      ],
+      server: false,
+      loading: false,
+      error: ''
+    }
+    const expectedState = {
+      todos: [
+        { id: 1, text: 'Get milk', complete: false }
+      ],
+      server: false,
+      loading: false,
+      error: 'Error toggling Todo'
+    }
+    const state = reducer(
+      init,
+      { type: 'TOGGLE_TODO_ASYNC_FAILURE' }
+    )
+
+    expect(state).toEqual(expectedState)
+  })
+
 })
 
 describe('fetchTodosAsync action', () => {
@@ -162,7 +246,7 @@ describe('fetchTodosAsync action', () => {
     })
   })
 
-  test('shold dispatch fetchTodosAsyncFailure', () => {
+  test('should dispatch fetchTodosAsyncFailure', () => {
     fetchMock.get('*', 500)
     const store = mockStore()
     store.dispatch(fetchTodosAsync()).then(() => {
@@ -174,4 +258,60 @@ describe('fetchTodosAsync action', () => {
   })
 })
 
-// todo: add todo thunk tests
+describe('addTodosAsync action', () => {
+  test('should dispatch addTodosAsyncSuccess', async () => {
+    fetchMock.post('*', { id: 1, text: 'Get milk', complete: false })
+    const store = mockStore()
+    store.dispatch(addTodoAsync('Get milk')).then(() => {
+      expect(store.getActions()).toEqual([
+        addTodoAsyncRequest(),
+        addTodoAsyncSuccess({ id: 1, text: 'Get milk', complete: false })
+      ])
+    })
+  })
+
+  test('should dispatch addTodosAsyncFailure', async () => {
+    fetchMock.post('*', 500)
+    const store = mockStore()
+    store.dispatch(addTodoAsync()).then(() => {
+      expect(store.getActions()).toEqual([
+        addTodoAsyncRequest(),
+        addTodoAsyncFailure({ error: 'Error adding Todo' })
+      ])
+    })
+  })
+})
+
+describe('toggleTodoAsync action', () => {
+  test('should dispatch toggleTodoAsyncSuccess', () => {
+    fetchMock.put('*', { id: 1, text: 'Get milk', complete: true })
+    const store = mockStore({
+      todo: {
+        todos: [{ id: 1, text: 'Get milk', complete: false }]
+      }
+    })
+
+    store.dispatch(toggleTodoAsync(1)).then(() => {
+      expect(store.getActions()).toEqual([
+        toggleTodoAsyncRequest(),
+        toggleTodoAsyncSuccess({ id: 1, text: 'Get milk', complete: true })
+      ])
+    })
+  })
+
+  test('should dispatch toggleTodoAsyncFailure', () => {
+    fetchMock.put('*', 500)
+    const store = mockStore({
+      todo: {
+        todos: [{ id: 1, text: 'Get milk', complete: false }]
+      }
+    })
+
+    store.dispatch(toggleTodoAsync(1)).then(() => {
+      expect(store.getActions()).toEqual([
+        toggleTodoAsyncRequest(),
+        toggleTodoAsyncFailure({ error: 'Error toggling Todo' })
+      ])
+    })
+  })
+})

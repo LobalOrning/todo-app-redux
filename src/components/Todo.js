@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Todo = ({ text, complete }) => (
+const Todo = ({ id, text, complete, toggleTodo }) => (
   <li>
-    <input type="checkbox" defaultChecked={complete} />
+    <input type="checkbox" checked={complete} onChange={() => toggleTodo(id)} />
     {text}
   </li>
 )

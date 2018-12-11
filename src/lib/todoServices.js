@@ -19,3 +19,16 @@ export const createTodoAsync = async (text) => {
 
   return await resp.json()
 }
+
+export const updateTodoAsync = async (todo) => {
+  const resp = await fetch(`http://localhost:8080/todos/${todo.id}`, {
+    method: 'PUT',
+    headers : {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(todo)
+  })
+
+  return await resp.json()
+}
