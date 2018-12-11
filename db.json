@@ -1,0 +1,29 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "text": "Get milk",
+      "complete": true
+    },
+    {
+      "id": 2,
+      "text": "Drink milk",
+      "complete": true
+    },
+    {
+      "id": 3,
+      "text": "Date Cindy Crawford",
+      "complete": false
+    },
+    {
+      "text": "Testing",
+      "complete": false,
+      "id": 4
+    },
+    {
+      "text": "Test too",
+      "complete": false,
+      "id": 5
+    }
+  ]
+}
