@@ -81,13 +81,16 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         server: false,
-        todos: state.todos.concat(action.payload)
+        todos: [
+          ...state.todos,
+          action.payload
+        ]
       }
     case ADD_TODO_ASYNC_FAILURE:
       return {
         ...state,
         server: false,
-        error: 'Error adding Tood'
+        error: 'Error adding Todo'
       }
     case FETCH_TODOS_ASYNC_REQUEST:
       return {
